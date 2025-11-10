@@ -22,7 +22,7 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Hash da senha antes de salvar
+// hash da senha antes de salvar
 userSchema.pre('save', async function(next) {
   if (!this.isModified('senha')) {
     return next();
@@ -37,12 +37,12 @@ userSchema.pre('save', async function(next) {
   }
 });
 
-// Método para comparar senhas
+// método para comparar senhas
 userSchema.methods.compararSenha = async function(senhaInformada) {
   return await bcrypt.compare(senhaInformada, this.senha);
 };
 
-// Remover senha do JSON
+// remover senha do JSON
 userSchema.methods.toJSON = function() {
   const obj = this.toObject();
   delete obj.senha;

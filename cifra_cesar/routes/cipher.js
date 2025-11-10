@@ -5,8 +5,8 @@ import auth from '../middleware/auth.js';
 
 const router = express.Router();
 
-/**
- * Função para aplicar Cifra de César
+/*
+  função para aplicar Cifra de César
  */
 const cifrarCesar = (texto, shift) => {
   return texto.split('').map(char => {
@@ -24,15 +24,15 @@ const cifrarCesar = (texto, shift) => {
   }).join('');
 };
 
-/**
- * Função para descriptografar Cifra de César
+/*
+  função para descriptografar Cifra de César
  */
 const decifrarCesar = (texto, shift) => {
   return cifrarCesar(texto, -shift);
 };
 
-/**
- * Gerar hash alfanumérico único
+/*
+  gerar hash alfanumérico único
  */
 const gerarHash = () => {
   const timestamp = Date.now().toString(36);
@@ -41,16 +41,16 @@ const gerarHash = () => {
 };
 
 /**
- * POST /api/cipher/criptografar
- * Criptografa uma mensagem usando Cifra de César
- * Requer autenticação JWT
+  POST /api/cipher/criptografar
+  criptografa uma mensagem
+  requer autenticação JWT
  */
 router.post('/criptografar', auth, async (req, res) => {
   try {
     const { mensagem, passo } = req.body;
     const usuarioId = req.userId;
 
-    // Validações
+    // validações
     if (!mensagem || passo === undefined) {
       return res.status(400).json({
         success: false,
@@ -58,7 +58,7 @@ router.post('/criptografar', auth, async (req, res) => {
       });
     }
 
-    // Validar que mensagem contém apenas a-z, A-Z, 0-9
+    // validar que mensagem contém apenas a-z, A-Z, 0-9
     if (!/^[a-zA-Z0-9]+$/.test(mensagem)) {
       return res.status(400).json({
         success: false,
@@ -66,7 +66,7 @@ router.post('/criptografar', auth, async (req, res) => {
       });
     }
 
-    // Validar passo
+    // validar passo
     const passoInt = parseInt(passo);
     if (isNaN(passoInt)) {
       return res.status(400).json({
@@ -75,20 +75,20 @@ router.post('/criptografar', auth, async (req, res) => {
       });
     }
 
-    // Criptografar mensagem
+    // criptografar mensagem
     const mensagemCifrada = cifrarCesar(mensagem, passoInt);
 
-    // Gerar hash único
+    // gerar hash único
     let hash = gerarHash();
     
-    // Garantir que o hash é único
+    // garantir que o hash é único
     let hashExiste = await Hash.findOne({ hash });
     while (hashExiste) {
       hash = gerarHash();
       hashExiste = await Hash.findOne({ hash });
     }
 
-    // Salvar hash no banco de dados
+    // salvar hash no banco de dados
     const novoHash = new Hash({
       hash,
       passo: passoInt,
@@ -98,7 +98,7 @@ router.post('/criptografar', auth, async (req, res) => {
 
     await novoHash.save();
 
-    // Retornar resultado
+    // retornar resultado
     res.status(201).json({
       success: true,
       message: 'Mensagem criptografada com sucesso!',
@@ -119,11 +119,11 @@ router.post('/criptografar', auth, async (req, res) => {
   }
 });
 
-/**
- * POST /api/cipher/descriptografar
- * Descriptografa uma mensagem usando hash único
- * Requer autenticação JWT
- * O hash só pode ser usado uma vez
+/*
+  POST /api/cipher/descriptografar
+  descriptografa uma mensagem usando hash único
+  requer autenticação JWT
+  o hash só pode ser usado uma vez
  */
 router.post('/descriptografar', auth, async (req, res) => {
   try {
@@ -137,7 +137,7 @@ router.post('/descriptografar', auth, async (req, res) => {
       });
     }
 
-    // Buscar hash no banco de dados
+    // buscar hash no banco de dados
     const hashDoc = await Hash.findOne({ hash });
 
     if (!hashDoc) {
@@ -147,7 +147,7 @@ router.post('/descriptografar', auth, async (req, res) => {
       });
     }
 
-    // Verificar se hash já foi usado
+    // verificar se hash já foi usado
     if (hashDoc.usado) {
       return res.status(403).json({
         success: false,
@@ -156,15 +156,15 @@ router.post('/descriptografar', auth, async (req, res) => {
       });
     }
 
-    // Descriptografar mensagem
+    // descriptografar mensagem
     const mensagemOriginal = decifrarCesar(mensagemCripto, hashDoc.passo);
 
-    // Marcar hash como usado
+    // marcar hash como usado
     hashDoc.usado = true;
     hashDoc.usadoEm = new Date();
     await hashDoc.save();
 
-    // Retornar resultado
+    // retornar resultado
     res.json({
       success: true,
       message: 'Mensagem descriptografada com sucesso!',
@@ -184,10 +184,10 @@ router.post('/descriptografar', auth, async (req, res) => {
   }
 });
 
-/**
- * GET /api/cipher/historico
- * Retorna o histórico de hashes do usuário
- * Requer autenticação JWT
+/*
+  GET /api/cipher/historico
+  retorna o histórico de hashes do usuário
+  requer autenticação JWT
  */
 router.get('/historico', auth, async (req, res) => {
   try {

@@ -15,15 +15,15 @@ const gerarToken = (userId) => {
   );
 };
 
-/**
- * POST /api/auth/cadastro
- * Registra um novo usuário
+/*
+  POST /api/auth/cadastro
+  registra um novo usuário
  */
 router.post('/cadastro', async (req, res) => {
   try {
     const { usuario, senha } = req.body;
 
-    // Validações
+    // validações
     if (!usuario || !senha) {
       return res.status(400).json({
         success: false,
@@ -45,7 +45,7 @@ router.post('/cadastro', async (req, res) => {
       });
     }
 
-    // Verificar se usuário já existe
+    // verificar se usuário já existe
     const usuarioExistente = await User.findOne({ usuario });
     if (usuarioExistente) {
       return res.status(400).json({
@@ -54,7 +54,7 @@ router.post('/cadastro', async (req, res) => {
       });
     }
 
-    // Criar novo usuário (senha será hasheada automaticamente pelo pre-save hook)
+    // criar novo usuário
     const novoUsuario = new User({
       usuario,
       senha
@@ -62,7 +62,7 @@ router.post('/cadastro', async (req, res) => {
 
     await novoUsuario.save();
 
-    // Gerar token JWT
+    // gerar token JWT
     const token = gerarToken(novoUsuario._id);
 
     res.status(201).json({
@@ -86,7 +86,7 @@ router.post('/cadastro', async (req, res) => {
 
 /**
  * POST /api/auth/login
- * Autentica um usuário e retorna JWT token
+ * autentica um usuário e retorna JWT token
  */
 router.post('/login', async (req, res) => {
   try {
@@ -100,7 +100,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Buscar usuário
+    // buscar usuário
     const user = await User.findOne({ usuario });
     if (!user) {
       return res.status(401).json({
@@ -109,7 +109,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Verificar senha
+    // verificar senha
     const senhaCorreta = await user.compararSenha(senha);
     if (!senhaCorreta) {
       return res.status(401).json({
@@ -118,7 +118,7 @@ router.post('/login', async (req, res) => {
       });
     }
 
-    // Gerar token JWT
+    // gerar token JWT
     const token = gerarToken(user._id);
 
     res.json({
@@ -142,7 +142,7 @@ router.post('/login', async (req, res) => {
 
 /**
  * GET /api/auth/verificar
- * Verifica se o token JWT é válido (requer autenticação)
+ * verifica se o token JWT é válido (auth)
  */
 router.get('/verificar', async (req, res) => {
   try {

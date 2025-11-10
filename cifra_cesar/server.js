@@ -5,17 +5,13 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import cipherRoutes from './routes/cipher.js';
 
-// Carregar variáveis de ambiente
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// ========================================
 // MIDDLEWARES
-// ========================================
 
-// CORS - Permitir requisições do frontend
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true
@@ -25,15 +21,13 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Log de requisições (desenvolvimento)
+// Log de requisições
 app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
   next();
 });
 
-// ========================================
 // CONEXÃO COM MONGODB
-// ========================================
 
 const conectarMongoDB = async () => {
   try {
@@ -62,11 +56,8 @@ mongoose.connection.on('disconnected', () => {
   console.warn('⚠️  MongoDB desconectado');
 });
 
-// ========================================
 // ROTAS
-// ========================================
 
-// Rota de health check
 app.get('/', (req, res) => {
   res.json({
     success: true,
@@ -79,13 +70,13 @@ app.get('/', (req, res) => {
   });
 });
 
-// Rotas de autenticação
+//autenticação
 app.use('/api/auth', authRoutes);
 
-// Rotas de criptografia (protegidas por JWT)
+//criptografia (protegidas por JWT)
 app.use('/api/cipher', cipherRoutes);
 
-// Rota 404 - Não encontrada
+//404 - Não encontrada
 app.use('*', (req, res) => {
   res.status(404).json({
     success: false,
@@ -93,10 +84,7 @@ app.use('*', (req, res) => {
   });
 });
 
-// ========================================
-// TRATAMENTO DE ERROS GLOBAL
-// ========================================
-
+// TRATAMENTO DE ERROS
 app.use((err, req, res, next) => {
   console.error('Erro não tratado:', err);
   
@@ -107,9 +95,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-// ========================================
-// INICIAR SERVIDOR
-// ========================================
+// // INICIAR SERVIDOR
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Servidor rodando na porta ${PORT}`);
@@ -123,7 +109,7 @@ app.listen(PORT, () => {
   console.log(`   GET    /api/cipher/historico - Histórico de hashes\n`);
 });
 
-// Graceful shutdown
+
 process.on('SIGTERM', () => {
   console.log('SIGTERM recebido. Encerrando servidor...');
   mongoose.connection.close();

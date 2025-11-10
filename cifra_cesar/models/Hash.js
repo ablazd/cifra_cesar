@@ -32,7 +32,7 @@ const hashSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Índice para busca rápida de hashes
+//busca rápida de hashes
 hashSchema.index({ hash: 1, usado: 1 });
 
 const Hash = mongoose.model('Hash', hashSchema);

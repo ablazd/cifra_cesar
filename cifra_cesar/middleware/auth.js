@@ -2,13 +2,12 @@ import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
 
 /**
- * Middleware de autenticação JWT
- * Verifica e valida o token JWT enviado no header Authorization
- * Garante Autenticidade, Integridade e Confidencialidade
+ * middleware de autenticação JWT
+ * verifica e valida o token JWT enviado no header Authorization
  */
 const auth = async (req, res, next) => {
   try {
-    // Obter token do header Authorization
+    // token do header auth
     const authHeader = req.header('Authorization');
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -18,7 +17,7 @@ const auth = async (req, res, next) => {
       });
     }
 
-    // Extrair o token (remover 'Bearer ')
+    // extrair o token
     const token = authHeader.substring(7);
 
     if (!token) {
@@ -29,10 +28,10 @@ const auth = async (req, res, next) => {
     }
 
     try {
-      // Verificar e decodificar o token
+      // verificar e decodificar o token
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      // Buscar usuário no banco
+
+      // buscar usuário no banco
       const user = await User.findById(decoded.id).select('-senha');
       
       if (!user) {
@@ -42,7 +41,7 @@ const auth = async (req, res, next) => {
         });
       }
 
-      // Adicionar usuário ao request para uso nas rotas
+      // adicionar usuário ao request para uso nas rotas
       req.user = user;
       req.userId = decoded.id;
       
