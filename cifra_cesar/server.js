@@ -97,7 +97,7 @@ app.use((err, req, res, next) => {
 
 // // INICIAR SERVIDOR
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`\n🚀 Servidor rodando na porta ${PORT}`);
   console.log(`📍 URL: http://localhost:${PORT}`);
   console.log(`\n📚 Endpoints disponíveis:`);
@@ -107,6 +107,21 @@ app.listen(PORT, () => {
   console.log(`   POST   /api/cipher/criptografar - Criptografar mensagem`);
   console.log(`   POST   /api/cipher/descriptografar - Descriptografar mensagem`);
   console.log(`   GET    /api/cipher/historico - Histórico de hashes\n`);
+});
+
+// Tratar erros do servidor (ex.: EADDRINUSE)
+server.on('error', (err) => {
+  if (err && err.code === 'EADDRINUSE') {
+    console.error(`\n❌ Porta ${PORT} já está em uso (EADDRINUSE).`);
+    console.error('   - Finalize o processo que está usando a porta ou inicie o servidor em outra porta.');
+    console.error('   - Para encerrar o processo que usa a porta, no PowerShell:');
+    console.error("       netstat -ano | findstr :5000  # identificar PID\n       taskkill /PID <PID> /F");
+    console.error('   - Ou execute com outra porta temporária:');
+    console.error("       $env:PORT=5001; npm start");
+    process.exit(1);
+  }
+  console.error('Erro inesperado no servidor:', err);
+  process.exit(1);
 });
 
 
