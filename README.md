@@ -1,13 +1,5 @@
 # 🔐 Cifra de César - Sistema Completo com JWT e MongoDB
 
-Sistema web completo de criptografia usando **Cifra de César** com autenticação JWT, backend Node.js + Express, banco de dados MongoDB e frontend React.
-
-## 🎨 Design
-
-- **Estilo**: Minimalista e limpo
-- **Paleta de Cores**: Tons de vermelho forte para ações principais, com fundo neutro (branco, cinza claro e preto)
-- **Responsivo**: Interface adaptável para desktop e mobile
-
 ---
 
 ## 🚀 Tecnologias Utilizadas
