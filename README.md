@@ -151,28 +151,6 @@ O frontend estará rodando em: `http://localhost:5173`
 
 ---
 
-## 🔒 API Endpoints
-
-### Autenticação (`/api/auth`)
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/cadastro` | Cadastrar novo usuário | ❌ |
-| POST | `/login` | Fazer login e receber JWT | ❌ |
-| GET | `/verificar` | Verificar se token é válido | ✅ |
-
-### Criptografia (`/api/cipher`)
-
-| Método | Endpoint | Descrição | Auth |
-|--------|----------|-----------|------|
-| POST | `/criptografar` | Criptografar mensagem | ✅ |
-| POST | `/descriptografar` | Descriptografar mensagem | ✅ |
-| GET | `/historico` | Ver histórico de hashes | ✅ |
-
-**Auth** ✅ = Requer token JWT no header: `Authorization: Bearer <token>`
-
----
-
 ## 🔐 Como Funciona o JWT
 
 1. **Cadastro/Login**: Usuário se autentica → Servidor gera JWT
@@ -185,59 +163,6 @@ O frontend estará rodando em: `http://localhost:5173`
 - ✅ **Autenticidade**: Token assinado com `JWT_SECRET`
 - ✅ **Integridade**: Qualquer alteração invalida o token
 - ✅ **Confidencialidade**: Dados sensíveis não são expostos
-
----
-
-## 🧪 Testando o Sistema
-
-### 1. Cadastrar um Usuário
-```bash
-# Via frontend: Acesse /cadastro
-# Ou via API:
-curl -X POST http://localhost:5000/api/auth/cadastro \
-  -H "Content-Type: application/json" \
-  -d '{"usuario":"teste","senha":"123456"}'
-```
-
-### 2. Fazer Login
-```bash
-curl -X POST http://localhost:5000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"usuario":"teste","senha":"123456"}'
-```
-
-### 3. Criptografar uma Mensagem
-```bash
-curl -X POST http://localhost:5000/api/cipher/criptografar \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <seu_token_aqui>" \
-  -d '{"mensagem":"hello123","passo":3}'
-```
-
-### 4. Descriptografar
-```bash
-curl -X POST http://localhost:5000/api/cipher/descriptografar \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer <seu_token_aqui>" \
-  -d '{"mensagemCripto":"khoor456","hash":"<hash_recebido>"}'
-```
-
----
-
-## 📦 Scripts Disponíveis
-
-### Backend (`cifra_cesar/`)
-```powershell
-npm start      # Iniciar servidor em produção
-npm run dev    # Iniciar com hot-reload (Node 18+)
-```
-
-### Frontend (`cifra/`)
-```powershell
-npm run dev    # Servidor de desenvolvimento (Vite)
-npm run build  # Build para produção
-npm run preview # Preview do build
-```
 
 ---
 
@@ -259,59 +184,8 @@ npm run preview # Preview do build
 
 ---
 
-## ⚠️ Regras Importantes
-
-1. ✅ Mensagens devem conter **apenas** `a-z`, `A-Z`, `0-9`
-2. ✅ Passo pode ser **positivo ou negativo**
-3. ✅ Hash pode ser usado **apenas uma vez**
-4. ✅ Token JWT expira em **24 horas** (configurável)
-5. ✅ Senhas nunca são armazenadas em texto plano
-
----
-
-## 🐛 Troubleshooting
-
-### MongoDB não conecta
-```powershell
-# Verificar se MongoDB está rodando
-# Windows: Inicie o serviço MongoDB
-# Ou use MongoDB Atlas (cloud) e atualize MONGODB_URI no .env
-```
-
-### CORS Error
-```javascript
-// Verifique se FRONTEND_URL está correto no backend
-// cifra_cesar/server.js - linha cors({ origin: ... })
-```
-
-### Token inválido/expirado
-```javascript
-// Faça logout e login novamente
-// Ou limpe o localStorage: localStorage.clear()
-```
-
----
-
 ## 👨‍💻 Autor
 
 Projeto desenvolvido para fins acadêmicos - **Segurança da Informação**
 
 ---
-
-## 📄 Licença
-
-MIT License - Livre para uso educacional e comercial.
-
----
-
-## 🎉 Próximos Passos
-
-- [ ] Adicionar testes automatizados (Jest/Vitest)
-- [ ] Implementar refresh tokens
-- [ ] Dashboard com estatísticas
-- [ ] Exportar/importar chaves
-- [ ] Suporte a mais algoritmos de criptografia
-
----
-
-**Desenvolvido com ❤️ usando React, Node.js e MongoDB**
